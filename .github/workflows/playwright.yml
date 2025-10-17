@@ -8,7 +8,8 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+
 
     steps:
       - name: Checkout repo
@@ -19,20 +20,12 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install WebKit dependencies
+      - name: Install WebKit dependencies (grouped)
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            libgtk-4-1 libgraphene-1.0-0 libwoff1 libvpx9 libevent-2.1-7 libopus0 \
-            libavif16 libx264-dev libsecret-1-0 libhyphen0 libmanette-0.2-0 libgles2 \
-            libharfbuzz-icu0 libflite1 libflite-dev libflite-usenglish1 libflite-cmu-us-kal16-1 \
-            libflite-cmu-us-slt-1 libflite-cmu-us-rms-1 libflite-cmu-us-kal-1 libflite-cmu-us-awb-1 \
-            libflite-cmu-time-awb-1 libflite-cmu-indic-lex-1 libflite-cmu-indic-lang-1 \
-            libflite-cmu-grapheme-lex-1 libflite-cmu-grapheme-lang-1 libflite-cmulex1 \
-            libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 libgstreamer-plugins-good1.0-0 \
-            libgstreamer-gl1.0-0 libgstreamer-plugins-bad1.0-0 libgstreamer-plugins-base1.0-dev \
-            libgstaudio-1.0-0 libgstvideo-1.0-0 libgstpbutils-1.0-0 libgsttag-1.0-0 libgstfft-1.0-0 \
-            libgstapp-1.0-0 libgstgl-1.0-0 libgstcodecparsers-1.0-0 libgstallocators-1.0-0
+          sudo apt-get install -y libgtk-4-1 libgraphene-1.0-0 libwoff1 libvpx9 libevent-2.1-7 libopus0 libavif16 libx264-dev libsecret-1-0 libhyphen0 libmanette-0.2-0 libgles2 libharfbuzz-icu0
+          sudo apt-get install -y libflite1 libflite-dev libflite-usenglish1 libflite-cmu-us-kal16-1 libflite-cmu-us-slt-1 libflite-cmu-us-rms-1 libflite-cmu-us-kal-1 libflite-cmu-us-awb-1 libflite-cmu-time-awb-1 libflite-cmu-indic-lex-1 libflite-cmu-indic-lang-1 libflite-cmu-grapheme-lex-1 libflite-cmu-grapheme-lang-1 libflite-cmulex1
+          sudo apt-get install -y libgstreamer1.0-0 libgstreamer-plugins-base1.0-0 libgstreamer-plugins-good1.0-0 libgstreamer-gl1.0-0 libgstreamer-plugins-bad1.0-0 libgstreamer-plugins-base1.0-dev libgstaudio-1.0-0 libgstvideo-1.0-0 libgstpbutils-1.0-0 libgsttag-1.0-0 libgstfft-1.0-0 libgstapp-1.0-0 libgstgl-1.0-0 libgstcodecparsers-1.0-0 libgstallocators-1.0-0
 
       - name: Install dependencies
         run: npm install
