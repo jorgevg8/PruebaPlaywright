@@ -1,25 +1,30 @@
 import { test, expect } from '@playwright/test';
 
-test('test', async ({ page }) => {
+test('Seleccionar 3 juegos al azar y agregarlos al carrito', async ({ page, context }) => {
   await page.goto('https://pixelgames.io/');
-  await page.getByRole('button', { name: 'Búsqueda' }).click();
-  await page.getByRole('combobox', { name: 'Búsqueda' }).fill('hollow knight');
-  await page.getByRole('link', { name: 'Hollow Knight: Silksong PS4 | PS5 Hollow Knight: Silksong PS4 | PS5' }).click();
-  await page.getByLabel('Plataforma de videojuegos').selectOption('PlayStation 5');
-  await page.goto('https://pixelgames.io/products/hollow-knight-silksong?variant=50052896162039');
-  await page.getByRole('button', { name: 'Agregar al carrito' }).click();
-  await page.getByRole('link', { name: 'Ver carrito (1)' }).click();
-  await page.getByRole('button', { name: 'Pagar pedido' }).click();
-  await page.getByRole('textbox', { name: 'Correo electrónico' }).click();
-  await page.getByRole('textbox', { name: 'Correo electrónico' }).fill('jorgevg945@gmail.com');
-  await page.getByRole('textbox', { name: 'Nombre' }).click();
-  await page.getByRole('textbox', { name: 'Nombre' }).fill('jorge');
-  await page.getByRole('textbox', { name: 'Apellidos' }).click();
-  await page.getByRole('textbox', { name: 'Apellidos' }).fill('velasquez');
-  await page.getByRole('textbox', { name: 'Teléfono' }).click();
-  await page.getByRole('textbox', { name: 'Teléfono' }).fill('4128418550');
-  await page.getByRole('textbox', { name: 'Ciudad' }).click();
-  await page.getByRole('textbox', { name: 'Ciudad' }).fill('cumana');
-  await page.getByRole('textbox', { name: 'Código postal (opcional)' }).click();
-  await page.getByRole('textbox', { name: 'Código postal (opcional)' }).fill('6021');
+  await page.waitForSelector('[id^="CardLink-template"]');
+
+  // Captura todos los juegos
+  const juegos = await page.$$('[id^="CardLink-template"]');
+
+  // Mezcla y toma 3 al azar
+  const productosAleatorios = juegos
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 3);
+
+  // Extrae las URLs de los juegos
+  const urls = [];
+  for (const juego of productosAleatorios) {
+    const href = await juego.getAttribute('href');
+    if (href) urls.push(href);
+  }
+
+  // Abre cada juego en una nueva pestaña y agrega al carrito
+  for (const url of urls) {
+    const nuevaPagina = await context.newPage();
+    await nuevaPagina.goto(`https://pixelgames.io${url}`);
+    await nuevaPagina.getByRole('button', { name: 'Agregar al carrito' }).click();
+    await nuevaPagina.close();
+    await page.getByRole('link', { name: 'Carrito' }).click();
+  }
 });
