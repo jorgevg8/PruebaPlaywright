@@ -43,7 +43,14 @@ test.describe('Sauce Demo - authentication and shopping cart', () => {
     await page.getByTestId('shopping-cart-link').click();
 
     await expect(page).toHaveURL(/cart\.html/);
-    await expect(page.getByTestId('inventory-item-name')).toHaveText(productName);
-    await expect(page.getByTestId('item-quantity')).toHaveText('1');
+
+    // Scope the assertions to the cart row for the selected product.
+    const cartItem = page.locator('.cart_item').filter({
+      has: page.getByTestId('inventory-item-name').filter({ hasText: productName }),
+    });
+
+    await expect(cartItem).toHaveCount(1);
+    await expect(cartItem.getByTestId('inventory-item-name')).toHaveText(productName);
+    await expect(cartItem.getByTestId('item-quantity')).toHaveText('1');
   });
 });
