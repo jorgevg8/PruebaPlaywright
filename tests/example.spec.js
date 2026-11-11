@@ -44,6 +44,6 @@ test.describe('Sauce Demo - authentication and shopping cart', () => {
 
     await expect(page).toHaveURL(/cart\.html/);
     await expect(page.getByTestId('inventory-item-name')).toHaveText(productName);
-    await expect(page.getByTestId('cart-quantity')).toHaveText('1');
+    await expect(page.getByTestId('item-quantity')).toHaveText('1');
   });
 });
