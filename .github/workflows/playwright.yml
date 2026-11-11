@@ -2,29 +2,33 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
     runs-on: ubuntu-22.04
     container:
-      image: mcr.microsoft.com/playwright:v1.43.1-jammy
+      image: mcr.microsoft.com/playwright:v1.56.1-jammy
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run Playwright tests
-        run: |
-          npx playwright test --reporter=html,line || echo "Tests completed with warnings"
+        run: npx playwright test
 
-      - name: Upload test report
+      - name: Upload Playwright report and failure artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
-          path: playwright-report/
+          name: playwright-report-and-results
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14
