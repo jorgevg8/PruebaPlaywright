@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-22.04
+    env:
+      HOME: /root
     container:
       image: mcr.microsoft.com/playwright:v1.56.1-jammy
 
