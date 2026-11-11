@@ -1,12 +1,17 @@
 import { test, expect } from '@playwright/test';
-test('Seleccionar DOMS en una pagina de prueba', async ({ page, context }) => {
 
-    await page.goto('https://the-internet.herokuapp.com/challenging_dom');
+test('displays the challenging DOM table and its rows', async ({ page }) => {
+  await page.goto('https://the-internet.herokuapp.com/challenging_dom');
 
-    await page.waitForTimeout(5000);
+  await expect(
+    page.getByRole('heading', { name: 'Challenging DOM' })
+  ).toBeVisible();
 
-    //Seleccionar el DOM
-    await page.click('#fd221c80-b02f-031e-02fc-12af3cfc7c48');
-}
+  const table = page.locator('table');
+  await expect(table).toBeVisible();
 
-)
+  const rows = table.locator('tbody tr');
+  await expect(rows).toHaveCount(10);
+
+  await expect(rows.first()).toBeVisible();
+});
