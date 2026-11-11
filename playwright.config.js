@@ -14,6 +14,7 @@ export default defineConfig({
   use: {
     // Sauce Demo uses data-test attributes rather than Playwright's default data-testid.
     testIdAttribute: 'data-test',
+    baseURL: 'https://www.saucedemo.com',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
