@@ -12,6 +12,8 @@ export default defineConfig({
     ['html', { open: 'never' }],
   ],
   use: {
+    // Sauce Demo uses data-test attributes rather than Playwright's default data-testid.
+    testIdAttribute: 'data-test',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
