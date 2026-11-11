@@ -1,30 +1,49 @@
 import { test, expect } from '@playwright/test';
 
-test('Seleccionar 3 juegos al azar y agregarlos al carrito', async ({ page, context }) => {
-  await page.goto('https://pixelgames.io/');
-  await page.waitForSelector('[id^="CardLink-template"]');
+const BASE_URL = 'https://www.saucedemo.com/';
+const VALID_USERNAME = 'standard_user';
+const VALID_PASSWORD = 'secret_sauce';
 
-  // Captura todos los juegos
-  const juegos = await page.$$('[id^="CardLink-template"]');
+test.describe('Sauce Demo - authentication and shopping cart', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(BASE_URL);
+  });
 
-  // Mezcla y toma 3 al azar
-  const productosAleatorios = juegos
-    .sort(() => Math.random() - 0.5)
-    .slice(0, 3);
+  test('allows a valid user to sign in', async ({ page }) => {
+    await page.getByTestId('username').fill(VALID_USERNAME);
+    await page.getByTestId('password').fill(VALID_PASSWORD);
+    await page.getByTestId('login-button').click();
 
-  // Extrae las URLs de los juegos
-  const urls = [];
-  for (const juego of productosAleatorios) {
-    const href = await juego.getAttribute('href');
-    if (href) urls.push(href);
-  }
+    await expect(page).toHaveURL(/inventory\.html/);
+    await expect(page.getByTestId('inventory-container')).toBeVisible();
+    await expect(page.getByTestId('title')).toHaveText('Products');
+  });
 
-  // Abre cada juego en una nueva pestaña y agrega al carrito
-  for (const url of urls) {
-    const nuevaPagina = await context.newPage();
-    await nuevaPagina.goto(`https://pixelgames.io${url}`);
-    await nuevaPagina.getByRole('button', { name: 'Agregar al carrito' }).click();
-    await nuevaPagina.close();
-    await page.getByRole('link', { name: 'Carrito' }).click();
-  }
+  test('shows an error when credentials are invalid', async ({ page }) => {
+    await page.getByTestId('username').fill(VALID_USERNAME);
+    await page.getByTestId('password').fill('wrong-password');
+    await page.getByTestId('login-button').click();
+
+    await expect(page.getByTestId('error')).toBeVisible();
+    await expect(page.getByTestId('error')).toContainText(
+      'Username and password do not match'
+    );
+    await expect(page).toHaveURL(BASE_URL);
+  });
+
+  test('adds a product to the cart and validates the cart contents', async ({ page }) => {
+    await page.getByTestId('username').fill(VALID_USERNAME);
+    await page.getByTestId('password').fill(VALID_PASSWORD);
+    await page.getByTestId('login-button').click();
+
+    const productName = 'Sauce Labs Backpack';
+    await page.getByTestId('add-to-cart-sauce-labs-backpack').click();
+
+    await expect(page.getByTestId('shopping-cart-badge')).toHaveText('1');
+    await page.getByTestId('shopping-cart-link').click();
+
+    await expect(page).toHaveURL(/cart\.html/);
+    await expect(page.getByTestId('inventory-item-name')).toHaveText(productName);
+    await expect(page.getByTestId('cart-quantity')).toHaveText('1');
+  });
 });
